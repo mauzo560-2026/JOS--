@@ -305,4 +305,577 @@ input:checked + .toggle-slider::before{transform:translateX(20px);}
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead>
+            <thead><tr><th>Jina</th><th>Simu</th><th>Aina</th><th>Mkoa</th><th>Kundi</th><th>Jiunge</th><th>Orodha</th><th>Vitendo</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAYMENTS ── -->
+    <div class="panel" id="panel-payments">
+      <div class="pay-settings-card">
+        <div class="pay-settings-title">💰 Mipangilio ya Malipo</div>
+        <div class="pay-settings-sub">Weka ada ya kuchapisha orodha. Muuzaji atalazimika kulipa kabla orodha yake haijachapishwa.</div>
+        <div class="pay-toggle">
+          <div>
+            <div class="pay-toggle-label">Wezesha Malipo ya Kuchapisha</div>
+            <div class="pay-toggle-sub">Ikiwashwa, muuzaji atalipa ada kwa kila orodha mpya</div>
+          </div>
+          <label class="toggle-switch"><input type="checkbox" id="pay-enabled" onchange="savePaySettings()"><div class="toggle-slider"></div></label>
+        </div>
+        <div class="fg">
+          <label>Ada ya Kuchapisha (TSh)</label>
+          <input class="inp" type="number" id="pay-amount" value="5000" placeholder="Mfano: 5000" onchange="savePaySettings()">
+        </div>
+        <div class="fg">
+          <label>Namba ya Malipo (Simu)</label>
+          <input class="inp" type="tel" id="pay-phone" value="0698622787" placeholder="Namba ya kupokea malipo" onchange="savePaySettings()">
+        </div>
+        <div class="fg">
+          <label>Njia za Malipo Zinazokubaliwa</label>
+          <div class="methods-grid">
+            <div class="method-tag on" onclick="toggleMethod(this,'M-Pesa')">📱 M-Pesa</div>
+            <div class="method-tag on" onclick="toggleMethod(this,'Tigo Pesa')">💳 Tigo Pesa</div>
+            <div class="method-tag on" onclick="toggleMethod(this,'Airtel Money')">📲 Airtel Money</div>
+            <div class="method-tag" onclick="toggleMethod(this,'Halopesa')">💰 Halopesa</div>
+            <div class="method-tag" onclick="toggleMethod(this,'Bank Transfer')">🏦 Bank Transfer</div>
+          </div>
+        </div>
+        <button class="btn btn-pr" onclick="savePaySettings();toast('Mipangilio imehifadhiwa ✅','ok')">💾 Hifadhi Mipangilio</button>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head"><div class="table-title">💳 Historia ya Malipo</div></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Muuzaji</th><th>Orodha</th><th>Kiasi</th><th>Njia</th><th>Tarehe</th><th>Hali</th></tr></thead>
+            <tbody id="payments-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="table-title">⏳ Orodha Zinazosubiri Malipo</div>
+          <button class="btn btn-pr btn-sm" onclick="notifyAllPending()">📢 Arifa Wote</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Jina la Bidhaa</th><th>Muuzaji</th><th>Simu</th><th>Ada</th><th>Vitendo</th></tr></thead>
+            <tbody id="pending-pay-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NOTIFICATIONS ── -->
+    <div class="panel" id="panel-notify">
+      <div class="notify-form">
+        <div class="notify-form-title">📢 Tuma Arifa kwa Watumiaji</div>
+        <div class="notify-form-sub">Tuma ujumbe wa WhatsApp kwa watumiaji au wauzaji wote. Ujumbe utakwenda moja kwa moja kwenye WhatsApp.</div>
+        <div class="fg"><label>Lengwa</label>
+          <div class="notify-target-row">
+            <button class="ntgt on" id="ntgt-all" onclick="setNotifyTarget('all')">Wote</button>
+            <button class="ntgt" id="ntgt-sellers" onclick="setNotifyTarget('sellers')">Wauzaji tu</button>
+            <button class="ntgt" id="ntgt-buyers" onclick="setNotifyTarget('buyers')">Wateja tu</button>
+          </div>
+        </div>
+        <div class="fg"><label>Ujumbe <span style="color:var(--ac)">*</span></label><textarea class="inp" id="notify-msg" style="min-height:100px" placeholder="Andika ujumbe wako hapa...&#10;&#10;Mfano: Habari! Tafuta App sasa ina orodha mpya zaidi ya 100 karibu nawe. Tembelea sasa!"></textarea></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-green" onclick="sendBulkNotify()">📤 Tuma WhatsApp</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('notify-msg').value=''">🗑️ Futa</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head"><div class="table-title">📋 Historia ya Arifa</div></div>
+        <div id="notify-history"></div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="panel" id="panel-settings">
+      <div class="pay-settings-card">
+        <div class="pay-settings-title">⚙️ Mipangilio ya App</div>
+        <div class="pay-settings-sub">Simamia mipangilio ya jumla ya TAFUTA APP.</div>
+        <div class="fg"><label>Jina la App</label><input class="inp" id="app-name" value="TAFUTA APP" onchange="saveAppSettings()"></div>
+        <div class="fg"><label>Simu ya Msaada (WhatsApp)</label><input class="inp" id="app-support" value="0698622787" onchange="saveAppSettings()"></div>
+        <div class="fg"><label>Ujumbe wa Kukaribishwa (Msimamizi)</label><textarea class="inp" id="app-welcome" style="min-height:80px" onchange="saveAppSettings()">Karibu TAFUTA APP! Tafuta kila kitu karibu nawe.</textarea></div>
+        <button class="btn btn-pr" onclick="saveAppSettings();toast('Mipangilio imehifadhiwa ✅','ok')">💾 Hifadhi</button>
+      </div>
+
+      <div class="pay-settings-card">
+        <div class="pay-settings-title" style="color:var(--ac)">⚠️ Eneo Hatari</div>
+        <div class="pay-settings-sub">Vitendo hivi haviwezi kurudishwa. Kuwa makini.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-red btn-sm" onclick="clearAllListings()">🗑️ Futa Orodha Zote</button>
+          <button class="btn btn-red btn-sm" onclick="clearAllUsers()">👥 Futa Watumiaji Wote</button>
+          <button class="btn btn-orange btn-sm" onclick="resetToDefaults()">🔄 Rudisha Orodha za Mfano</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LISTING DETAIL MODAL -->
+<div class="modal-wrap" id="listing-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div id="modal-img-area"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-meta" id="modal-cat"></div>
+    <div class="modal-meta" id="modal-loc"></div>
+    <div class="modal-meta" id="modal-seller"></div>
+    <div class="modal-price" id="modal-price"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div id="modal-pay-section" style="display:none;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">💰 Weka Ada ya Malipo</div>
+      <div class="pay-amount-input">
+        <div class="fg" style="flex:1;margin:0">
+          <label>Kiasi cha Ada (TSh)</label>
+          <input class="inp" type="number" id="modal-pay-amount" placeholder="Mfano: 5000">
+        </div>
+        <button class="btn btn-pr btn-sm" onclick="setPayForListing()">Weka Ada</button>
+      </div>
+      <div class="pay-set-notice">Muuzaji ataarifu kupitia WhatsApp na ataona kitufe cha "Lipa Sasa" kwenye orodha yake.</div>
+    </div>
+    <div class="modal-actions" id="modal-actions"></div>
+    <button onclick="document.getElementById('listing-modal').classList.remove('open')" style="width:100%;margin-top:12px;padding:10px;background:var(--card2);border:1px solid var(--line);border-radius:var(--rs);color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">Funga</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'tafuta_shared';
+const ADM_EMAIL = 'jabirsoloka560@gmail.com';
+const ADM_PW = 'tafuta26';
+
+// ── STORE ──
+function loadStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e) { return {}; } }
+function saveStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {} }
+function getListings() { const s = loadStore(); return s.listings || []; }
+function setListings(l) { const s = loadStore(); s.listings = l; saveStore(s); }
+function getUsers() { const s = loadStore(); return s.users || []; }
+function setUsers(u) { const s = loadStore(); s.users = u; saveStore(s); }
+function getPaySettings() { const s = loadStore(); return s.paySettings || { enabled: false, amount: 5000, phone: '0698622787', methods: ['M-Pesa','Tigo Pesa','Airtel Money'] }; }
+function setPaySettings(p) { const s = loadStore(); s.paySettings = p; saveStore(s); }
+function getPayHistory() { const s = loadStore(); return s.payHistory || []; }
+function setPayHistory(h) { const s = loadStore(); s.payHistory = h; saveStore(s); }
+function getNotifyHistory() { const s = loadStore(); return s.notifyHistory || []; }
+function addNotifyHistory(n) { const s = loadStore(); if (!s.notifyHistory) s.notifyHistory = []; s.notifyHistory.unshift(n); if (s.notifyHistory.length > 50) s.notifyHistory = s.notifyHistory.slice(0, 50); saveStore(s); }
+
+const CATS = {ajira:'💼 Ajira',afya:'🏥 Afya',kilimo:'🌾 Kilimo',biashara:'🛒 Biashara',usafiri:'🚗 Usafiri',nyumba:'🏠 Nyumba',elimu:'📚 Elimu',fedha:'💰 Fedha',chakula:'🍽️ Chakula',burudani:'🎵 Burudani',teknolojia:'💻 Teknolojia',nyingine:'✨ Nyingine'};
+
+let curTab = 'dash';
+let notifyTarget = 'all';
+let modalListingId = null;
+let toastT = null;
+let payMethods = ['M-Pesa','Tigo Pesa','Airtel Money'];
+
+// ── AUTH ──
+function doAdmLogin() {
+  const em = document.getElementById('adm-em').value.trim();
+  const pw = document.getElementById('adm-pw').value.trim();
+  if (em === ADM_EMAIL && pw === ADM_PW) {
+    try { sessionStorage.setItem('tafuta_adm', '1'); } catch(e) {}
+    goto('s-admin');
+    refreshAll();
+    toast('Karibu Admin! 🛡️', 'ok');
+  } else {
+    toast('Barua pepe au nywila si sahihi ❌', 'err');
+  }
+}
+function doLogout() {
+  try { sessionStorage.removeItem('tafuta_adm'); } catch(e) {}
+  goto('s-login');
+  toast('Umetoka salama 👋');
+}
+
+// ── NAVIGATION ──
+function goto(id) {
+  document.querySelectorAll('.sc').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function switchTab(t) {
+  curTab = t;
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('on'));
+  document.getElementById('tab-' + t).classList.add('on');
+  document.getElementById('panel-' + t).classList.add('on');
+  refreshAll();
+}
+
+// ── REFRESH ALL ──
+function refreshAll() {
+  const listings = getListings();
+  const users = getUsers();
+  const pending = listings.filter(l => l.status === 'pending_review');
+  const pendingPay = listings.filter(l => l.status === 'pending_payment');
+  document.getElementById('badge-pending').textContent = pending.length + pendingPay.length;
+  if (curTab === 'dash') renderDash(listings, users);
+  else if (curTab === 'listings') renderListingsTable();
+  else if (curTab === 'users') renderUsersTable();
+  else if (curTab === 'payments') renderPayments();
+  else if (curTab === 'notify') renderNotifyHistory();
+  else if (curTab === 'settings') loadSettings();
+}
+
+// ── DASHBOARD ──
+function renderDash(listings, users) {
+  const sellers = users.filter(u => u.role === 'seller');
+  const approved = listings.filter(l => l.status === 'approved');
+  const pending = listings.filter(l => l.status === 'pending_review' || l.status === 'pending_payment');
+  const payHist = getPayHistory();
+  const revenue = payHist.reduce((a, p) => a + (p.amount || 0), 0);
+
+  document.getElementById('s-users').textContent = users.length;
+  document.getElementById('s-sellers').textContent = sellers.length + ' wauzaji';
+  document.getElementById('s-listings').textContent = listings.length;
+  document.getElementById('s-approved').textContent = approved.length + ' zilizoidhinishwa';
+  document.getElementById('s-pending').textContent = pending.length;
+  document.getElementById('s-revenue').textContent = 'TSh ' + revenue.toLocaleString();
+
+  // Category chart
+  const catCounts = {};
+  listings.forEach(l => { catCounts[l.cat] = (catCounts[l.cat] || 0) + 1; });
+  const topCats = Object.entries(catCounts).sort((a,b) => b[1]-a[1]).slice(0,7);
+  const maxC = Math.max(...topCats.map(c=>c[1]), 1);
+  document.getElementById('cat-chart').innerHTML = topCats.map(([cat, cnt]) => `
+    <div class="bar-wrap">
+      <div class="bar-val">${cnt}</div>
+      <div class="bar" style="height:${Math.max(8, cnt/maxC*70)}px;background:linear-gradient(to top,var(--pr2),var(--pr))"></div>
+      <div class="bar-lbl">${(CATS[cat]||cat).split(' ')[0]}</div>
+    </div>`).join('');
+
+  // Status summary
+  const statuses = [
+    {label:'Zilizoidhinishwa',count:approved.length,color:'var(--green)'},
+    {label:'Zinasubiri Ukaguzi',count:listings.filter(l=>l.status==='pending_review').length,color:'var(--orange)'},
+    {label:'Zinasubiri Malipo',count:listings.filter(l=>l.status==='pending_payment').length,color:'var(--blue)'},
+    {label:'Zilizoisha (SOLD)',count:listings.filter(l=>l.sold).length,color:'var(--red)'},
+    {label:'Zilizokataliwa',count:listings.filter(l=>l.status==='rejected').length,color:'var(--muted)'},
+  ];
+  const totalL = listings.length || 1;
+  document.getElementById('status-summary').innerHTML = statuses.map(s => `
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${s.color};flex-shrink:0"></div>
+      <div style="font-size:12px;color:var(--sub);font-weight:600;flex:1">${s.label}</div>
+      <div style="font-size:13px;font-weight:800;color:var(--text)">${s.count}</div>
+      <div style="width:60px;height:6px;background:var(--line2);border-radius:3px;overflow:hidden">
+        <div style="height:100%;background:${s.color};width:${Math.round(s.count/totalL*100)}%;border-radius:3px;transition:width .5s"></div>
+      </div>
+    </div>`).join('');
+
+  // Activity log
+  const recent = [...listings].sort((a,b)=>(b.submittedAt||'').localeCompare(a.submittedAt||'')).slice(0,8);
+  document.getElementById('activity-log').innerHTML = recent.length ? recent.map(l => `
+    <div class="log-item">
+      <div class="log-icon ${l.status==='approved'?'green':l.status==='pending_review'?'orange':l.status==='pending_payment'?'blue':'red'}">
+        ${l.status==='approved'?'✅':l.status==='pending_review'?'⏳':l.status==='pending_payment'?'💰':'❌'}
+      </div>
+      <div class="log-body">
+        <div class="log-title">${l.title?.slice(0,50) || 'Orodha'}</div>
+        <div class="log-sub">${l.seller} · ${CATS[l.cat]||l.cat} · TSh ${Number(l.price||0).toLocaleString()}</div>
+        <div class="log-time">${l.submittedAt ? new Date(l.submittedAt).toLocaleString('sw') : 'Saa haijulikani'}</div>
+      </div>
+      <span class="badge ${l.status==='approved'?'badge-approved':l.status==='pending_review'?'badge-pending':l.status==='pending_payment'?'badge-pay':'badge-rejected'}">${l.status==='approved'?'IMEIDHINISHWA':l.status==='pending_review'?'INASUBIRI':l.status==='pending_payment'?'MALIPO':'ILIKATALIWA'}</span>
+    </div>`).join('') : '<div class="empty-state"><div class="ee">📭</div><p>Bado hakuna orodha</p></div>';
+}
+
+// ── LISTINGS TABLE ──
+function renderListingsTable() {
+  const q = (document.getElementById('listing-search')?.value || '').toLowerCase();
+  const filterStatus = document.getElementById('filter-status')?.value || '';
+  let list = getListings();
+  if (filterStatus) list = list.filter(l => l.status === filterStatus);
+  if (q) list = list.filter(l => (l.title||'').toLowerCase().includes(q) || (l.seller||'').toLowerCase().includes(q) || (l.loc||'').toLowerCase().includes(q));
+  document.getElementById('listing-count').textContent = list.length;
+  document.getElementById('listings-tbody').innerHTML = list.map(l => `
+    <tr>
+      <td>${l.img ? `<img src="${l.img}" class="td-img">` : `<div class="td-img">${l.emoji||'📦'}</div>`}</td>
+      <td><div class="td-title">${l.title}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${l.submittedAt?new Date(l.submittedAt).toLocaleDateString('sw'):''}</div></td>
+      <td>${CATS[l.cat]||l.cat}</td>
+      <td><div style="font-weight:700">${l.seller}</div><div style="font-size:10px;color:var(--muted)">${l.wa||''}</div></td>
+      <td>TSh ${Number(l.price||0).toLocaleString()}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.loc||'—'}</td>
+      <td><span class="badge ${statusBadge(l.status)}">${statusLabel(l.status)}${l.sold?' · SOLD':''}</span></td>
+      <td><div class="td-actions">
+        <button class="btn btn-sm" style="background:var(--bg3);color:var(--sub);font-size:10px" onclick="openListingModal(${l.id})">👁️ Angalia</button>
+        ${l.status==='pending_review'?`<button class="btn btn-green btn-sm" onclick="approveL(${l.id})">✅ Idhinisha</button><button class="btn btn-orange btn-sm" onclick="requestPayL(${l.id})">💰 Omba Ada</button><button class="btn btn-red btn-sm" onclick="rejectL(${l.id})">❌ Kataa</button>`:
+          l.status==='approved'?`<button class="btn btn-red btn-sm" onclick="rejectL(${l.id})">❌ Kataa</button>`:
+          l.status==='rejected'?`<button class="btn btn-green btn-sm" onclick="approveL(${l.id})">✅ Idhinisha</button>`:
+          l.status==='pending_payment'?`<button class="btn btn-green btn-sm" onclick="confirmPayment(${l.id})">✅ Thibitisha Malipo</button>`:''
+        }
+        <button class="btn btn-red btn-sm" onclick="deleteL(${l.id})">🗑️</button>
+      </div></td>
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">Hakuna orodha</td></tr>';
+}
+
+function statusBadge(s) { return {approved:'badge-approved',pending_review:'badge-pending',pending_payment:'badge-pay',rejected:'badge-rejected'}[s]||'badge-pending'; }
+function statusLabel(s) { return {approved:'IMEIDHINISHWA',pending_review:'INASUBIRI UKAGUZI',pending_payment:'INASUBIRI MALIPO',rejected:'ILIKATALIWA'}[s]||s; }
+
+// LISTING ACTIONS
+function approveL(id) {
+  updateListingStatus(id, 'approved');
+  toast('✅ Orodha imeidhinishwa na inachapishwa sasa!', 'ok');
+  notifySellerWA(id, 'Habari! Orodha yako kwenye TAFUTA APP imeidhinishwa na sasa inaonekana kwa wateja wote. Asante! 🎉');
+  document.getElementById('listing-modal').classList.remove('open');
+}
+function rejectL(id) {
+  const reason = prompt('Sababu ya kukataa (itumwe kwa muuzaji):') || 'Orodha haikidhi masharti yetu.';
+  updateListingStatus(id, 'rejected');
+  toast('Orodha imekataliwa', 'err');
+  notifySellerWA(id, `Habari! Kwa bahati mbaya orodha yako kwenye TAFUTA APP imekataliwa. Sababu: ${reason}. Wasiliana nasi: 0698622787`);
+  document.getElementById('listing-modal').classList.remove('open');
+}
+function requestPayL(id) {
+  updateListingStatus(id, 'pending_payment');
+  const pay = getPaySettings();
+  toast('💰 Muuzaji ataarifu kulipa TSh ' + Number(pay.amount).toLocaleString(), 'info');
+  notifySellerWA(id, `Habari! Orodha yako kwenye TAFUTA APP inahitaji malipo ya TSh ${Number(pay.amount).toLocaleString()} kabla haijachapishwa. Lipa kwa ${pay.methods?.join('/')||'M-Pesa'}: ${pay.phone||'0698622787'}. Tuma uthibitisho hapa.`);
+  document.getElementById('listing-modal').classList.remove('open');
+}
+function confirmPayment(id) {
+  const listings = getListings();
+  const l = listings.find(x => x.id === id);
+  if (!l) return;
+  const pay = getPaySettings();
+  // Record payment
+  const payHist = getPayHistory();
+  payHist.unshift({ id: Date.now(), listingId: id, listingTitle: l.title, seller: l.seller, sellerPhone: l.sellerPhone, amount: pay.amount, date: new Date().toISOString(), method: 'Manual' });
+  setPayHistory(payHist);
+  // Approve
+  l.status = 'approved';
+  setListings(listings);
+  toast('✅ Malipo yamethibitishwa! Orodha imechapishwa.', 'ok');
+  notifySellerWA(id, 'Habari! Malipo yako yamethibitishwa. Orodha yako kwenye TAFUTA APP sasa inaonekana kwa wateja wote. Asante! 🎉');
+  refreshAll();
+}
+function deleteL(id) {
+  if (!confirm('Una uhakika wa kufuta orodha hii?')) return;
+  setListings(getListings().filter(l => l.id !== id));
+  toast('Orodha imefutwa', 'err');
+  refreshAll();
+}
+function updateListingStatus(id, status) {
+  const listings = getListings();
+  const l = listings.find(x => x.id === id);
+  if (l) { l.status = status; setListings(listings); }
+  refreshAll();
+}
+function setPayForListing() {
+  const amt = Number(document.getElementById('modal-pay-amount').value);
+  if (!amt || amt < 0) { toast('Weka kiasi sahihi', 'err'); return; }
+  const pay = getPaySettings();
+  pay.amount = amt;
+  setPaySettings(pay);
+  requestPayL(modalListingId);
+}
+function notifySellerWA(id, msg) {
+  const l = getListings().find(x => x.id === id);
+  if (!l || !l.wa) return;
+  const n = l.wa.replace(/[^0-9]/g, '');
+  window.open('https://wa.me/' + n + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// LISTING MODAL
+function openListingModal(id) {
+  modalListingId = id;
+  const l = getListings().find(x => x.id === id);
+  if (!l) return;
+  const pay = getPaySettings();
+  document.getElementById('modal-img-area').innerHTML = l.img ? `<img src="${l.img}" class="modal-img">` : `<div class="modal-img-ph">${l.emoji||'📦'}</div>`;
+  document.getElementById('modal-title').textContent = l.title;
+  document.getElementById('modal-cat').textContent = '🏷️ ' + (CATS[l.cat]||l.cat);
+  document.getElementById('modal-loc').textContent = '📍 ' + (l.loc||'—') + (l.lat ? ` · ${l.lat.toFixed(3)}, ${l.lng?.toFixed(3)}` : '');
+  document.getElementById('modal-seller').textContent = '👤 ' + l.seller + ' · 📞 ' + (l.wa||'—');
+  document.getElementById('modal-price').textContent = 'TSh ' + Number(l.price||0).toLocaleString() + ' ' + (l.period||'');
+  document.getElementById('modal-desc').textContent = l.desc;
+  const paySection = document.getElementById('modal-pay-section');
+  paySection.style.display = l.status === 'pending_review' ? 'block' : 'none';
+  if (pay.amount) document.getElementById('modal-pay-amount').value = pay.amount;
+  document.getElementById('modal-actions').innerHTML = `
+    ${l.status==='pending_review'?`<button class="btn btn-green" onclick="approveL(${id})">✅ Idhinisha</button><button class="btn btn-orange" onclick="requestPayL(${id})">💰 Omba Ada</button><button class="btn btn-ac" onclick="rejectL(${id})">❌ Kataa</button>`:
+      l.status==='approved'?`<button class="btn btn-ac" onclick="rejectL(${id})">❌ Kataa Sasa</button>`:
+      l.status==='pending_payment'?`<button class="btn btn-green" onclick="confirmPayment(${id})">✅ Thibitisha Malipo</button>`:
+      l.status==='rejected'?`<button class="btn btn-green" onclick="approveL(${id})">✅ Idhinisha Sasa</button>`:''
+    }
+    <button class="btn btn-red btn-sm" onclick="deleteL(${id})">🗑️ Futa</button>`;
+  document.getElementById('listing-modal').classList.add('open');
+}
+function closeModal(e) { if (e.target === document.getElementById('listing-modal')) document.getElementById('listing-modal').classList.remove('open'); }
+
+// ── USERS ──
+function renderUsersTable() {
+  const q = (document.getElementById('user-search')?.value || '').toLowerCase();
+  let users = getUsers();
+  if (q) users = users.filter(u => (u.name||'').toLowerCase().includes(q) || (u.phone||'').includes(q) || (u.region||'').toLowerCase().includes(q));
+  document.getElementById('user-count').textContent = users.length;
+  const listings = getListings();
+  document.getElementById('users-tbody').innerHTML = users.map(u => {
+    const myL = listings.filter(l => l.sellerPhone === u.phone).length;
+    return `<tr>
+      <td><div style="font-weight:700">${u.name}</div></td>
+      <td>${u.phone}</td>
+      <td><span class="badge ${u.role==='seller'?'badge-seller':'badge-buyer'}">${u.role==='seller'?'MUUZAJI':'MTEJA'}</span></td>
+      <td>${u.region||'—'}</td>
+      <td>${u.scat?CATS[u.scat]||u.scat:'—'}</td>
+      <td style="font-size:10px;color:var(--muted)">${u.joinDate?new Date(u.joinDate).toLocaleDateString('sw'):'—'}</td>
+      <td>${myL}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-sm btn-pr" onclick="msgUser('${u.wa||u.phone}','${u.name}')">💬 WA</button>
+        <button class="btn btn-red btn-sm" onclick="deleteUser('${u.phone}')">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">Hakuna watumiaji bado</td></tr>';
+}
+function deleteUser(phone) {
+  if (!confirm('Futa mtumiaji huyu?')) return;
+  setUsers(getUsers().filter(u => u.phone !== phone));
+  toast('Mtumiaji amefutwa', 'err');
+  refreshAll();
+}
+function msgUser(wa, name) {
+  const n = (wa||'0698622787').replace(/[^0-9]/g,'');
+  window.open('https://wa.me/' + n + '?text=' + encodeURIComponent('Habari ' + name + '! Hii ni ujumbe kutoka TAFUTA APP.'), '_blank');
+}
+
+// ── PAYMENTS ──
+function savePaySettings() {
+  const pay = getPaySettings();
+  pay.enabled = document.getElementById('pay-enabled').checked;
+  pay.amount = Number(document.getElementById('pay-amount').value) || 5000;
+  pay.phone = document.getElementById('pay-phone').value.trim() || '0698622787';
+  pay.methods = payMethods.slice();
+  setPaySettings(pay);
+}
+function toggleMethod(el, method) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) { if (!payMethods.includes(method)) payMethods.push(method); }
+  else { payMethods = payMethods.filter(m => m !== method); }
+  savePaySettings();
+}
+function renderPayments() {
+  const pay = getPaySettings();
+  document.getElementById('pay-enabled').checked = pay.enabled || false;
+  document.getElementById('pay-amount').value = pay.amount || 5000;
+  document.getElementById('pay-phone').value = pay.phone || '0698622787';
+  // Payment history
+  const hist = getPayHistory();
+  document.getElementById('payments-tbody').innerHTML = hist.length ? hist.map(p => `
+    <tr>
+      <td><div style="font-weight:700">${p.seller}</div><div style="font-size:10px;color:var(--muted)">${p.sellerPhone||''}</div></td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.listingTitle||'—'}</td>
+      <td style="font-weight:800;color:var(--green)">TSh ${Number(p.amount||0).toLocaleString()}</td>
+      <td>${p.method||'—'}</td>
+      <td style="font-size:11px;color:var(--sub)">${p.date?new Date(p.date).toLocaleDateString('sw'):'—'}</td>
+      <td><span class="badge badge-approved">IMETHIBITISHWA</span></td>
+    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">Hakuna historia ya malipo bado</td></tr>';
+  // Pending payment listings
+  const listings = getListings();
+  const pendPay = listings.filter(l => l.status === 'pending_payment');
+  document.getElementById('pending-pay-tbody').innerHTML = pendPay.length ? pendPay.map(l => `
+    <tr>
+      <td><div class="td-title" style="max-width:160px">${l.title}</div></td>
+      <td style="font-weight:700">${l.seller}</td>
+      <td style="color:var(--sub)">${l.wa||'—'}</td>
+      <td style="font-weight:800;color:var(--orange)">TSh ${Number(pay.amount||5000).toLocaleString()}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-green btn-sm" onclick="confirmPayment(${l.id})">✅ Thibitisha</button>
+        <button class="btn btn-sm" style="background:var(--bg3);color:var(--sub);font-size:10px" onclick="notifySellerWA(${l.id},'Habari! Orodha yako inasubiri malipo. Tafadhali lipa ili ichapishwe.')">💬 Kumbush</button>
+      </div></td>
+    </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Hakuna orodha zinazosubiri malipo</td></tr>';
+}
+function notifyAllPending() {
+  const pendPay = getListings().filter(l => l.status === 'pending_payment');
+  const pay = getPaySettings();
+  pendPay.forEach(l => {
+    if (l.wa) {
+      const n = l.wa.replace(/[^0-9]/g,'');
+      const msg = `Habari ${l.seller}! Orodha yako "${l.title}" kwenye TAFUTA APP inasubiri malipo ya TSh ${Number(pay.amount).toLocaleString()}. Lipa kupitia ${pay.methods?.join('/')||'M-Pesa'}: ${pay.phone||'0698622787'}. Tuma uthibitisho hapa. Asante!`;
+      setTimeout(() => window.open('https://wa.me/' + n + '?text=' + encodeURIComponent(msg), '_blank'), 500);
+    }
+  });
+  toast(`Arifa zimetumwa kwa orodha ${pendPay.length} zinazosubiri malipo`, 'ok');
+}
+
+// ── NOTIFICATIONS ──
+function setNotifyTarget(t) {
+  notifyTarget = t;
+  document.querySelectorAll('.ntgt').forEach(el => el.classList.remove('on'));
+  document.getElementById('ntgt-' + t).classList.add('on');
+}
+function sendBulkNotify() {
+  const msg = document.getElementById('notify-msg').value.trim();
+  if (!msg) { toast('Andika ujumbe kwanza', 'err'); return; }
+  let users = getUsers();
+  if (notifyTarget === 'sellers') users = users.filter(u => u.role === 'seller');
+  else if (notifyTarget === 'buyers') users = users.filter(u => u.role === 'buyer');
+  if (!users.length) { toast('Hakuna watumiaji wa kuarifu', 'err'); return; }
+  // Open WhatsApp for each user (first 5 to avoid popup blocking)
+  const toNotify = users.slice(0, 5);
+  toNotify.forEach((u, i) => {
+    const n = (u.wa || u.phone || '').replace(/[^0-9]/g,'');
+    if (n) setTimeout(() => window.open('https://wa.me/' + n + '?text=' + encodeURIComponent(msg), '_blank'), i * 600);
+  });
+  addNotifyHistory({ id: Date.now(), msg, target: notifyTarget, count: users.length, date: new Date().toISOString() });
+  toast(`Arifa imetumwa kwa watumiaji ${Math.min(users.length, 5)} (${users.length} wote kwa hali ya kawaida)`, 'ok');
+  renderNotifyHistory();
+}
+function renderNotifyHistory() {
+  const hist = getNotifyHistory();
+  document.getElementById('notify-history').innerHTML = hist.length ? hist.map(n => `
+    <div class="log-item">
+      <div class="log-icon blue">📢</div>
+      <div class="log-body">
+        <div class="log-title">${n.msg?.slice(0,80)||'Ujumbe'}${n.msg?.length>80?'...':''}</div>
+        <div class="log-sub">Lengwa: ${n.target==='all'?'Wote':n.target==='sellers'?'Wauzaji':'Wateja'} · ${n.count} watumiaji</div>
+        <div class="log-time">${n.date?new Date(n.date).toLocaleString('sw'):''}</div>
+      </div>
+    </div>`).join('') : '<div class="empty-state"><div class="ee">📭</div><p>Hakuna historia ya arifa</p><span>Tuma arifa yako ya kwanza hapo juu</span></div>';
+}
+
+// ── SETTINGS ──
+function loadSettings() {}
+function saveAppSettings() {}
+function clearAllListings() {
+  if (!confirm('Una uhakika? Orodha ZOTE zitafutwa kabisa!')) return;
+  setListings([]);
+  toast('Orodha zote zimefutwa', 'err');
+  refreshAll();
+}
+function clearAllUsers() {
+  if (!confirm('Una uhakika? Watumiaji WOTE watafutwa!')) return;
+  setUsers([]);
+  toast('Watumiaji wote wamefutwa', 'err');
+  refreshAll();
+}
+function resetToDefaults() {
+  if (!confirm('Rudisha orodha za mfano?')) return;
+  const s = loadStore();
+  delete s.listings;
+  saveStore(s);
+  toast('Orodha za mfano zimerudishwa ✅', 'ok');
+  refreshAll();
+}
+
+// ── TOAST ──
+function toast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── INIT ──
+try {
+  const adm = sessionStorage.getItem('tafuta_adm');
+  if (adm === '1') { goto('s-admin'); refreshAll(); }
+} catch(e) {}
+</script>
+</body>
+</html>
