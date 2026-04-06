@@ -746,6 +746,7 @@ textarea.inp{resize:vertical;min-height:88px;line-height:1.6;}
 // ══ SHARED STATE (communicate with admin via sessionStorage) ══
 const STORE_KEY = 'tafuta_shared';
 const SESSION_KEY = 'tafuta_session';
+const USER_KEY = 'tafuta_user_active';
 
 function loadStore() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e) { return {}; }
@@ -968,7 +969,7 @@ function doRegister() {
   if (users.find(u => u.phone === ph)) { toast('Simu hii tayari imesajiliwa', 'err'); return; }
   user = { name: fn + ' ' + ln, phone: ph, wa: wa || ph, role, scat, region, avatar: regAvatarData, pw, joinDate: new Date().toISOString() };
   users.push({...user});
-  setUsers(users);
+  setUsers(users); // setUsers handles avatar storage separately
   saveSession();
   afterLogin();
 }
@@ -1033,15 +1034,30 @@ function updateProfAv(inp) {
   r.readAsDataURL(inp.files[0]);
 }
 function saveSession() {
-  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); } catch(e) {}
+  try {
+    // Save lightweight user data to localStorage (persists across sessions)
+    const light = { phone: user.phone, name: user.name, role: user.role, scat: user.scat, region: user.region, wa: user.wa, pw: user.pw, joinDate: user.joinDate };
+    localStorage.setItem(USER_KEY, JSON.stringify(light));
+  } catch(e) {}
 }
 function loadSession() {
-  try { const s = sessionStorage.getItem(SESSION_KEY); if (s) { user = JSON.parse(s); return true; } } catch(e) {}
+  try {
+    const s = localStorage.getItem(USER_KEY);
+    if (!s) return false;
+    const light = JSON.parse(s);
+    // Re-fetch full user from users store (includes avatar)
+    const allUsers = getUsers();
+    const found = allUsers.find(u => u.phone === light.phone && u.pw === light.pw);
+    if (found) { user = found; return true; }
+    // Fallback: use light data even if not in users store
+    user = light;
+    return true;
+  } catch(e) {}
   return false;
 }
 function doLogout() {
   user = null; role = null; scat = null; regAvatarData = null;
-  try { sessionStorage.removeItem(SESSION_KEY); } catch(e) {}
+  try { localStorage.removeItem(USER_KEY); } catch(e) {}
   document.getElementById('bnav').classList.remove('show');
   goto('s-login');
   toast('Umetoka salama 👋');
@@ -1320,7 +1336,11 @@ try {
   if (sl) { lang = sl; document.getElementById('lang-btn').textContent = '🌐 ' + (lang === 'sw' ? 'SW' : 'EN'); }
   if (slat && slng) { userLat = parseFloat(slat); userLng = parseFloat(slng); userLocName = slocname || ''; if (userLocName) { document.getElementById('loc-text').textContent = '📍 ' + userLocName; document.getElementById('loc-sub').textContent = 'Eneo lako la mwisho'; } }
 } catch(e) {}
-if (loadSession() && user) { afterLogin(); } else { goto('s-login'); }
+if (loadSession() && user) {
+  // Reattach avatar from separate store
+  if (!user.avatar) user.avatar = getAvatar(user.phone);
+  afterLogin();
+} else { goto('s-login'); }
 </script>
 </body>
 </html>
