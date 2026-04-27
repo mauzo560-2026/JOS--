@@ -156,6 +156,24 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
 .topbar-loc-btn { background: var(--pr-l) !important; color: var(--pr) !important; border: none; border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer; flex-shrink: 0; font-family: var(--sans); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── OTP SCREEN ── */
+.otp-boxes { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
+.otp-box { width: 46px; height: 56px; border: 2px solid var(--line); border-radius: 14px; font-size: 22px; font-weight: 800; text-align: center; font-family: var(--sans); color: var(--txt); background: var(--bg3); outline: none; transition: border-color .15s, background .15s; caret-color: var(--pr); -webkit-appearance: none; }
+.otp-box:focus { border-color: var(--pr); background: #fff; box-shadow: 0 0 0 3px rgba(5,150,105,.12); }
+.otp-box.filled { border-color: var(--pr); background: var(--pr-l); color: var(--pr-d); }
+.otp-timer { font-size: 12px; color: var(--txt3); text-align: center; margin-bottom: 8px; font-weight: 600; }
+.otp-resend { font-size: 13px; font-weight: 700; color: var(--pr); text-align: center; cursor: pointer; padding: 8px; display: inline-block; width: 100%; }
+.otp-resend.disabled { color: var(--txt3); pointer-events: none; }
+.otp-via { display: flex; align-items: center; gap: 10px; background: #ECFDF5; border-radius: 14px; padding: 13px 14px; margin-bottom: 18px; border: 1px solid #A7F3D0; }
+.otp-via-ic { font-size: 24px; flex-shrink: 0; }
+.otp-via-txt { font-size: 12px; font-weight: 600; color: #065f46; line-height: 1.45; }
+.pw-strength { height: 4px; border-radius: 2px; background: var(--line); margin-top: 8px; overflow: hidden; }
+.pw-strength-bar { height: 100%; border-radius: 2px; width: 0%; transition: width .3s, background .3s; }
+.pw-hint { font-size: 11px; color: var(--txt3); margin-top: 5px; }
+.pw-eye { position: relative; }
+.pw-eye .finput { padding-right: 44px; }
+.pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; cursor: pointer; color: var(--txt3); padding: 4px; }
+
 /* Filter pills */
 .filter-pill { background: var(--bg3) !important; border: 1.5px solid transparent; border-radius: 20px; padding: 5px 13px; font-size: 12px; font-weight: 700; color: var(--txt2) !important; cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0; font-family: var(--sans); }
 .filter-pill.on { background: var(--pr) !important; color: #fff !important; border-color: var(--pr); }
@@ -674,18 +692,24 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
       <div class="auth-sub">Ingia kwenye akaunti yako ya Tafuta</div>
     </div>
     <div class="card">
-      <div class="card-hd">Ingia</div>
-      <div class="card-sub">Weka namba yako ya simu na nywila</div>
+      <div class="card-hd">Karibu Tena 👋</div>
+      <div class="card-sub">Weka namba yako ya simu na nywila yako</div>
       <div class="field">
         <label class="field-lbl">Namba ya Simu <span class="req">*</span></label>
         <div class="field-wrap">
           <div class="field-pfx">🇹🇿 +255</div>
-          <input class="finput" type="tel" id="l-ph" placeholder="7XX XXX XXX">
+          <input class="finput" type="tel" id="l-ph" placeholder="7XX XXX XXX" maxlength="9">
         </div>
       </div>
       <div class="field">
         <label class="field-lbl">Nywila <span class="req">*</span></label>
-        <input class="finput" type="password" id="l-pw" placeholder="Nywila yako">
+        <div class="pw-eye">
+          <input class="finput" type="password" id="l-pw" placeholder="Nywila yako">
+          <button class="pw-toggle" type="button" onclick="togglePwVis('l-pw',this)">👁</button>
+        </div>
+      </div>
+      <div style="text-align:right;margin-bottom:14px;">
+        <span style="font-size:12px;font-weight:700;color:var(--pr);cursor:pointer" onclick="doForgotPw()">Umesahau nywila?</span>
       </div>
       <button class="btn-p" onclick="doLogin()">Ingia Sasa →</button>
     </div>
@@ -694,15 +718,16 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
 </div>
 
 <!-- ══════════════════════════
-     REGISTER
+     REGISTER — Hatua 1
 ══════════════════════════ -->
 <div class="scr off" id="s-register">
   <div class="auth-body">
     <div class="auth-top">
       <button class="auth-back" onclick="nav('s-splash')">← Rudi</button>
       <div class="auth-wordmark">Jiunge<br><em>Bure.</em></div>
-      <div class="auth-sub">Tengeneza akaunti yako ya biashara kwa sekunde</div>
+      <div class="auth-sub">Hatua 1 ya 3 — Maelezo yako ya msingi</div>
     </div>
+    <div class="prog-bar"><div class="prog-seg on"></div><div class="prog-seg"></div><div class="prog-seg"></div></div>
 
     <div class="card">
       <div class="card-hd">Wewe ni nani? 👋</div>
@@ -736,10 +761,12 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
           <div class="sc-item" onclick="pickScat(this,'nyingine')"><span class="sci">✨</span><span class="scl">Nyingine</span></div>
         </div>
       </div>
+
       <div class="av-row">
         <div class="av-up" id="av-wrap"><span id="av-ph">👤</span><img id="av-img" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;"><input type="file" accept="image/*" onchange="loadAvatar(this)"></div>
         <div class="av-info"><strong>Picha ya Wasifu</strong>Bonyeza kupakia picha.<br>Inasababisha imani zaidi.</div>
       </div>
+
       <div class="field-row">
         <div class="field">
           <label class="field-lbl">Jina la Kwanza <span style="color:var(--red)">*</span></label>
@@ -750,17 +777,7 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
           <input class="finput" id="r-ln" placeholder="Jina la ukoo">
         </div>
       </div>
-      <div class="field">
-        <label class="field-lbl">Namba ya Simu <span style="color:var(--red)">*</span></label>
-        <div class="field-wrap">
-          <div class="field-pfx">🇹🇿 +255</div>
-          <input class="finput" type="tel" id="r-ph" placeholder="7XX XXX XXX">
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-lbl">WhatsApp (Hiari)</label>
-        <input class="finput" id="r-wa" placeholder="+255 7XX XXX XXX">
-      </div>
+
       <div class="field">
         <label class="field-lbl">Mkoa <span style="color:var(--red)">*</span></label>
         <select class="finput" id="r-region">
@@ -780,23 +797,112 @@ textarea.finput { resize: none; line-height: 1.55; min-height: 90px; }
           </optgroup>
         </select>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label class="field-lbl">Nywila <span style="color:var(--red)">*</span></label>
-          <input class="finput" type="password" id="r-pw" placeholder="Herufi 6+">
+
+      <div class="field">
+        <label class="field-lbl">Namba ya Simu <span style="color:var(--red)">*</span></label>
+        <div class="field-wrap">
+          <div class="field-pfx">🇹🇿 +255</div>
+          <input class="finput" type="tel" id="r-ph" placeholder="7XX XXX XXX"
+            oninput="onPhoneInput(this)" maxlength="9">
         </div>
-        <div class="field">
-          <label class="field-lbl">Rudia Nywila <span style="color:var(--red)">*</span></label>
-          <input class="finput" type="password" id="r-pw2" placeholder="Rudia">
-        </div>
+        <div id="r-ph-status" style="font-size:11px;margin-top:5px;color:var(--txt3);min-height:16px"></div>
       </div>
-      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;background:#F5F5F5;border-radius:12px;padding:12px;">
+
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;background:var(--bg3);border-radius:12px;padding:12px;">
         <input type="checkbox" id="r-terms" style="margin-top:3px;accent-color:var(--pr);flex-shrink:0;">
         <label for="r-terms" style="font-size:12px;color:#737373;cursor:pointer;line-height:1.6;">Nakubali <a style="color:var(--pr);font-weight:700;cursor:pointer">Masharti ya Matumizi</a> na <a style="color:var(--pr);font-weight:700;cursor:pointer">Sera ya Faragha</a> ya Tafuta</label>
       </div>
-      <button class="btn-p" onclick="doRegister()">Tengeneza Akaunti →</button>
+
+      <button class="btn-p" id="reg-send-btn" onclick="doRegisterStep1()">
+        📲 Tuma OTP → Thibitisha Namba
+      </button>
     </div>
     <div class="auth-switch">Una akaunti? <a onclick="nav('s-login')">Ingia hapa</a></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     OTP VERIFY — Hatua 2
+══════════════════════════ -->
+<div class="scr off" id="s-otp">
+  <div class="auth-body">
+    <div class="auth-top">
+      <button class="auth-back" onclick="nav('s-register')">← Rudi</button>
+      <div class="auth-wordmark">Thibitisha<br><em>Namba.</em></div>
+      <div class="auth-sub">Hatua 2 ya 3 — Ingiza msimbo uliotumwa</div>
+    </div>
+    <div class="prog-bar"><div class="prog-seg on"></div><div class="prog-seg on"></div><div class="prog-seg"></div></div>
+
+    <div class="card">
+      <div class="card-hd">Ingiza OTP 🔐</div>
+      <div class="otp-via">
+        <div class="otp-via-ic">💬</div>
+        <div class="otp-via-txt">Msimbo wa tarakimu 6 umetumwa kwa WhatsApp kwenye namba yako.<br><strong id="otp-ph-display">+255 —</strong></div>
+      </div>
+
+      <div class="otp-boxes">
+        <input class="otp-box" type="number" maxlength="1" id="ob1" oninput="otpInput(this,1)" onkeydown="otpKey(event,1)">
+        <input class="otp-box" type="number" maxlength="1" id="ob2" oninput="otpInput(this,2)" onkeydown="otpKey(event,2)">
+        <input class="otp-box" type="number" maxlength="1" id="ob3" oninput="otpInput(this,3)" onkeydown="otpKey(event,3)">
+        <input class="otp-box" type="number" maxlength="1" id="ob4" oninput="otpInput(this,4)" onkeydown="otpKey(event,4)">
+        <input class="otp-box" type="number" maxlength="1" id="ob5" oninput="otpInput(this,5)" onkeydown="otpKey(event,5)">
+        <input class="otp-box" type="number" maxlength="1" id="ob6" oninput="otpInput(this,6)" onkeydown="otpKey(event,6)">
+      </div>
+
+      <div class="otp-timer" id="otp-timer">⏱ Msimbo unaisha baada ya: <strong id="otp-countdown">02:00</strong></div>
+      <div class="otp-resend disabled" id="otp-resend-btn" onclick="resendOTP()">Tuma tena msimbo</div>
+
+      <button class="btn-p" onclick="doVerifyOTP()">Thibitisha OTP →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     SET PASSWORD — Hatua 3
+══════════════════════════ -->
+<div class="scr off" id="s-setpw">
+  <div class="auth-body">
+    <div class="auth-top">
+      <button class="auth-back" onclick="nav('s-otp')">← Rudi</button>
+      <div class="auth-wordmark">Weka<br><em>Nywila.</em></div>
+      <div class="auth-sub">Hatua 3 ya 3 — Unda nywila ya akaunti yako</div>
+    </div>
+    <div class="prog-bar"><div class="prog-seg on"></div><div class="prog-seg on"></div><div class="prog-seg on"></div></div>
+
+    <div class="card">
+      <div class="card-hd">Unda Nywila 🔒</div>
+      <div class="card-sub">Nywila yenye nguvu italinda akaunti yako. Tumia herufi na nambari.</div>
+
+      <div class="field">
+        <label class="field-lbl">Nywila Mpya <span style="color:var(--red)">*</span></label>
+        <div class="pw-eye">
+          <input class="finput" type="password" id="sp-pw" placeholder="Herufi 6+ na nambari"
+            oninput="checkPwStrength(this.value)">
+          <button class="pw-toggle" type="button" onclick="togglePwVis('sp-pw',this)">👁</button>
+        </div>
+        <div class="pw-strength"><div class="pw-strength-bar" id="pw-bar"></div></div>
+        <div class="pw-hint" id="pw-hint">Angalau herufi 6</div>
+      </div>
+
+      <div class="field">
+        <label class="field-lbl">Rudia Nywila <span style="color:var(--red)">*</span></label>
+        <div class="pw-eye">
+          <input class="finput" type="password" id="sp-pw2" placeholder="Rudia nywila yako">
+          <button class="pw-toggle" type="button" onclick="togglePwVis('sp-pw2',this)">👁</button>
+        </div>
+      </div>
+
+      <div style="background:var(--pr-l);border-radius:12px;padding:12px 14px;margin-bottom:18px;">
+        <div style="font-size:11.5px;font-weight:700;color:var(--pr-d);margin-bottom:6px;">✅ Nywila nzuri ina:</div>
+        <div style="font-size:11px;color:#065f46;line-height:1.8;" id="pw-checklist">
+          <div id="pc-len">○ Herufi 6 au zaidi</div>
+          <div id="pc-num">○ Nambari moja au zaidi (0-9)</div>
+          <div id="pc-upper">○ Herufi kubwa moja (A-Z)</div>
+        </div>
+      </div>
+
+      <button class="btn-p" onclick="doSetPassword()">🎉 Maliza & Ingia App →</button>
+    </div>
   </div>
 </div>
 
@@ -1361,34 +1467,275 @@ function toast(msg){
 }
 
 // ── AUTH ──
+// ════════════════════════════════════════
+// AUTH — 3-Step OTP Registration Flow
+// ════════════════════════════════════════
+let _pendingReg   = null;  // Taarifa za usajili zikingoja OTP
+let _otpCode      = null;  // OTP iliyotumwa
+let _otpTimer     = null;  // Countdown interval
+let _otpMode      = 'register'; // 'register' | 'forgot'
+
+// ── HELPERS ──
 function pickRole(r){
   role=r;
-  const rcb=el('rc-buyer');if(rcb)rcb.classList.toggle('on',r==='buyer');
-  const rcs=el('rc-seller');if(rcs)rcs.classList.toggle('on',r==='seller');
-  const scatBox=document.getElementById('scat-box'); if(scatBox)scatBox.style.display=r==='seller'?'block':'none';
+  el('rc-buyer')?.classList.toggle('on',r==='buyer');
+  el('rc-seller')?.classList.toggle('on',r==='seller');
+  const sb=el('scat-box'); if(sb)sb.style.display=r==='seller'?'block':'none';
 }
-function pickScat(el,v){
+function pickScat(elem,v){
   scat=v;
   document.querySelectorAll('.sc-item').forEach(i=>i.classList.remove('on'));
-  if(el)el.classList.add('on');
+  if(elem)elem.classList.add('on');
 }
 function loadAvatar(input){
   if(!input.files||!input.files[0])return;
   const reader=new FileReader();
   reader.onload=e=>{
     regAvatarData=e.target.result;
-    const img=document.getElementById('av-img');
+    const img=el('av-img');
     if(img){img.src=regAvatarData;img.style.display='block';}
     setDisp('av-ph','none');
   };
   reader.readAsDataURL(input.files[0]);
 }
-function saveSession(u){ try{sessionStorage.setItem(SESSION_KEY,JSON.stringify(u));}catch(e){} }
-function loadSession(){ try{const d=sessionStorage.getItem(SESSION_KEY);return d?JSON.parse(d):null;}catch(e){return null;} }
+function saveSession(u){ try{localStorage.setItem(SESSION_KEY,JSON.stringify(u));}catch(e){} }
+function loadSession(){ try{const d=localStorage.getItem(SESSION_KEY);return d?JSON.parse(d):null;}catch(e){return null;} }
 
+// Phone input feedback
+function onPhoneInput(inp){
+  const v=inp.value.replace(/\D/g,'');
+  inp.value=v;
+  const status=el('r-ph-status');
+  if(!status)return;
+  if(v.length===0){status.textContent='';return;}
+  if(v.length<9){status.textContent='⏳ Endelea kuingiza namba...';status.style.color='var(--txt3)';}
+  else if(v.length===9){status.textContent='✅ Namba iko sawa!';status.style.color='var(--pr)';}
+  else{status.textContent='⚠️ Namba ni ndefu mno';status.style.color='var(--red)';}
+}
+
+// ── GENERATE OTP ──
+function generateOTP(){
+  return String(Math.floor(100000+Math.random()*900000));
+}
+
+// ── SEND OTP via WhatsApp ──
+function sendOTPWhatsApp(phone, code){
+  const msg=`🔐 *Msimbo wako wa TAFUTA App*\n\nMsimbo: *${code}*\n\n⏱ Unaisha baada ya dakika 2.\n\nKama hukuomba msimbo huu, puuza ujumbe huu.`;
+  const waNum='255'+phone;
+  const url=`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
+  window.open(url,'_blank');
+}
+
+// ── COUNTDOWN TIMER ──
+function startOTPTimer(){
+  let secs=120;
+  const countEl=el('otp-countdown');
+  const resendBtn=el('otp-resend-btn');
+  if(resendBtn){resendBtn.classList.add('disabled');resendBtn.textContent='Tuma tena msimbo';}
+  clearInterval(_otpTimer);
+  _otpTimer=setInterval(()=>{
+    secs--;
+    const m=String(Math.floor(secs/60)).padStart(2,'0');
+    const s=String(secs%60).padStart(2,'0');
+    if(countEl)countEl.textContent=`${m}:${s}`;
+    if(secs<=0){
+      clearInterval(_otpTimer);
+      if(countEl)countEl.textContent='00:00';
+      if(resendBtn){resendBtn.classList.remove('disabled');resendBtn.textContent='🔄 Tuma tena msimbo';}
+    }
+  },1000);
+}
+
+function resendOTP(){
+  if(!_pendingReg)return;
+  _otpCode=generateOTP();
+  sendOTPWhatsApp(_pendingReg.phone,_otpCode);
+  startOTPTimer();
+  // Clear boxes
+  [1,2,3,4,5,6].forEach(i=>{ const b=el('ob'+i); if(b){b.value='';b.classList.remove('filled');} });
+  el('ob1')?.focus();
+  toast('📲 OTP mpya imetumwa!');
+}
+
+// ── OTP BOX CONTROLS ──
+function otpInput(inp, idx){
+  const v=inp.value.replace(/\D/g,'');
+  inp.value=v.slice(-1);
+  inp.classList.toggle('filled',inp.value.length>0);
+  if(inp.value&&idx<6) el('ob'+(idx+1))?.focus();
+  // Auto-verify when all 6 filled
+  const all=[1,2,3,4,5,6].map(i=>el('ob'+i)?.value||'').join('');
+  if(all.length===6) setTimeout(doVerifyOTP,200);
+}
+function otpKey(e,idx){
+  if(e.key==='Backspace'&&!el('ob'+idx)?.value&&idx>1){
+    el('ob'+(idx-1))?.focus();
+  }
+}
+
+// ── STEP 1: Validate & Send OTP ──
+function doRegisterStep1(){
+  const fn=el('r-fn')?.value.trim();
+  const ln=el('r-ln')?.value.trim();
+  const ph=el('r-ph')?.value.trim().replace(/\D/g,'');
+  const region=el('r-region')?.value;
+  const terms=el('r-terms')?.checked;
+
+  if(!role){toast('⚠️ Chagua aina ya akaunti kwanza');return;}
+  if(role==='seller'&&!scat){toast('⚠️ Chagua kundi la biashara');return;}
+  if(!fn||!ln){toast('⚠️ Jaza jina lako la kwanza na la familia');return;}
+  if(!region){toast('⚠️ Chagua mkoa wako');return;}
+  if(!ph||ph.length!==9){toast('⚠️ Weka namba sahihi ya simu (tarakimu 9)');return;}
+  if(!terms){toast('⚠️ Kubali masharti ya matumizi kwanza');return;}
+
+  // Check if phone already registered
+  const users=getUsers();
+  if(users.find(x=>x.phone===ph)){toast('⚠️ Namba hii tayari imesajiliwa — Ingia badala yake');return;}
+
+  // Store pending registration
+  _pendingReg={
+    name:`${fn} ${ln}`,firstName:fn,lastName:ln,
+    phone:ph,region,role,scat:scat||null,
+    wa:ph,avatar:regAvatarData||null
+  };
+  _otpMode='register';
+
+  // Generate & send OTP
+  _otpCode=generateOTP();
+  sendOTPWhatsApp(ph,_otpCode);
+
+  // Setup OTP screen
+  const disp=el('otp-ph-display');
+  if(disp)disp.textContent='+255 '+ph.replace(/(\d{3})(\d{3})(\d{3})/,'$1 $2 $3');
+
+  // Clear OTP boxes
+  [1,2,3,4,5,6].forEach(i=>{ const b=el('ob'+i); if(b){b.value='';b.classList.remove('filled');} });
+
+  startOTPTimer();
+  nav('s-otp');
+  setTimeout(()=>el('ob1')?.focus(),400);
+  toast('📲 OTP inatumwa kwa WhatsApp yako...');
+}
+
+// ── STEP 2: Verify OTP ──
+function doVerifyOTP(){
+  const entered=[1,2,3,4,5,6].map(i=>el('ob'+i)?.value||'').join('');
+  if(entered.length<6){toast('⚠️ Ingiza msimbo wote wa tarakimu 6');return;}
+  if(entered!==_otpCode){
+    toast('❌ Msimbo si sahihi — jaribu tena');
+    [1,2,3,4,5,6].forEach(i=>{
+      const b=el('ob'+i);
+      if(b){b.style.borderColor='var(--red)';setTimeout(()=>b.style.borderColor='',1000);}
+    });
+    return;
+  }
+  clearInterval(_otpTimer);
+  toast('✅ Namba imethibitishwa!');
+
+  if(_otpMode==='forgot'){
+    // Go to password reset
+    nav('s-setpw');
+  } else {
+    // Register — go to set password
+    nav('s-setpw');
+  }
+  // Clear pw fields
+  const pw=el('sp-pw'); if(pw)pw.value='';
+  const pw2=el('sp-pw2'); if(pw2)pw2.value='';
+  checkPwStrength('');
+}
+
+// ── STEP 3: Set Password & Complete ──
+function doSetPassword(){
+  const pw=el('sp-pw')?.value;
+  const pw2=el('sp-pw2')?.value;
+  if(!pw||pw.length<6){toast('⚠️ Nywila lazima iwe herufi 6+');return;}
+  if(pw!==pw2){toast('⚠️ Nywila hazifanani');return;}
+
+  if(_otpMode==='forgot'){
+    // Update existing user password
+    const users=getUsers();
+    const idx=users.findIndex(x=>x.phone===_pendingReg.phone);
+    if(idx>=0){
+      users[idx].password=pw;
+      setUsers(users);
+      user=users[idx];
+      saveSession(user);
+      toast('✅ Nywila imebadilishwa!');
+      afterLogin();
+    } else {
+      toast('❌ Mtumiaji hajapatikana');
+    }
+    return;
+  }
+
+  // Complete registration
+  _pendingReg.password=pw;
+  const users=getUsers();
+  users.push(_pendingReg);
+  setUsers(users);
+  user=_pendingReg;
+  saveSession(user);
+  toast('🎉 Akaunti imefanikiwa kuundwa!');
+  afterLogin();
+}
+
+// ── PASSWORD VISIBILITY TOGGLE ──
+function togglePwVis(inputId, btn){
+  const inp=el(inputId);
+  if(!inp)return;
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁';
+}
+
+// ── PASSWORD STRENGTH ──
+function checkPwStrength(val){
+  const bar=el('pw-bar');
+  const hint=el('pw-hint');
+  const hasLen=val.length>=6;
+  const hasNum=/\d/.test(val);
+  const hasUpper=/[A-Z]/.test(val);
+
+  const cl=el('pc-len'); if(cl)cl.textContent=(hasLen?'✅':'○')+' Herufi 6 au zaidi';
+  const cn=el('pc-num'); if(cn)cn.textContent=(hasNum?'✅':'○')+' Nambari moja au zaidi (0-9)';
+  const cu=el('pc-upper'); if(cu)cu.textContent=(hasUpper?'✅':'○')+' Herufi kubwa moja (A-Z)';
+
+  const score=[hasLen,hasNum,hasUpper].filter(Boolean).length;
+  const colors=['','#EF4444','#D97706','#059669'];
+  const widths=['0%','40%','70%','100%'];
+  const hints=['','Dhaifu','Wastani','Nguvu 💪'];
+  if(bar){bar.style.width=widths[score];bar.style.background=colors[score];}
+  if(hint&&val.length>0)hint.textContent=hints[score];
+  else if(hint)hint.textContent='Angalau herufi 6';
+}
+
+// ── FORGOT PASSWORD ──
+function doForgotPw(){
+  const ph=el('l-ph')?.value.trim().replace(/\D/g,'');
+  if(!ph||ph.length!==9){toast('⚠️ Kwanza weka namba yako ya simu hapo juu');return;}
+  const users=getUsers();
+  const u=users.find(x=>x.phone===ph);
+  if(!u){toast('❌ Namba hii haijasajiliwa — Jiunge kwanza');return;}
+
+  _pendingReg={phone:ph};
+  _otpMode='forgot';
+  _otpCode=generateOTP();
+  sendOTPWhatsApp(ph,_otpCode);
+
+  const disp=el('otp-ph-display');
+  if(disp)disp.textContent='+255 '+ph.replace(/(\d{3})(\d{3})(\d{3})/,'$1 $2 $3');
+  [1,2,3,4,5,6].forEach(i=>{ const b=el('ob'+i); if(b){b.value='';b.classList.remove('filled');} });
+  startOTPTimer();
+  nav('s-otp');
+  setTimeout(()=>el('ob1')?.focus(),400);
+  toast('📲 OTP ya kubadilisha nywila imetumwa!');
+}
+
+// ── LOGIN (with password) ──
 function doLogin(){
-  const ph=document.getElementById('l-ph').value.trim();
-  const pw=document.getElementById('l-pw').value;
+  const ph=el('l-ph')?.value.trim().replace(/\D/g,'');
+  const pw=el('l-pw')?.value;
   if(!ph||!pw){toast('⚠️ Jaza namba ya simu na nywila');return;}
   const users=getUsers();
   const u=users.find(x=>x.phone===ph&&x.password===pw);
@@ -1397,28 +1744,7 @@ function doLogin(){
   saveSession(u);
   afterLogin();
 }
-function doRegister(){
-  const fn=document.getElementById('r-fn').value.trim();
-  const ln=document.getElementById('r-ln').value.trim();
-  const ph=document.getElementById('r-ph').value.trim();
-  const pw=document.getElementById('r-pw').value;
-  const pw2=document.getElementById('r-pw2').value;
-  const region=document.getElementById('r-region').value;
-  if(!fn||!ln||!ph||!pw||!region){toast('⚠️ Jaza sehemu zote zinazohitajika');return;}
-  if(!role){toast('⚠️ Chagua aina ya akaunti');return;}
-  if(role==='seller'&&!scat){toast('⚠️ Chagua kundi la biashara');return;}
-  if(pw.length<6){toast('⚠️ Nywila lazima iwe herufi 6+');return;}
-  if(pw!==pw2){toast('⚠️ Nywila hazifanani');return;}
-  if(!document.getElementById('r-terms').checked){toast('⚠️ Kubali masharti kwanza');return;}
-  const wa=document.getElementById('r-wa').value.trim();
-  const users=getUsers();
-  if(users.find(x=>x.phone===ph)){toast('⚠️ Namba hii tayari imesajiliwa');return;}
-  user={name:`${fn} ${ln}`,firstName:fn,lastName:ln,phone:ph,password:pw,region,role,scat:scat||null,wa:wa||ph,avatar:regAvatarData||null};
-  users.push(user);
-  setUsers(users);
-  saveSession(user);
-  afterLogin();
-}
+
 function afterLogin(){
   if(!user)return;
   try{
@@ -1448,7 +1774,7 @@ function afterLogin(){
 }
 function doLogout(){
   user=null;
-  try{sessionStorage.removeItem(SESSION_KEY);}catch(e){}
+  try{localStorage.removeItem(SESSION_KEY);}catch(e){}
   nav('s-splash');
 }
 
@@ -1571,7 +1897,7 @@ function requestLocation(){
     setText('loc-menu-sub',name);
     if(locBtn){locBtn.textContent='✅';setTimeout(()=>{if(locBtn)locBtn.textContent='🔄';},2000);}
     renderListings(getFilteredListings());
-    try{sessionStorage.setItem('tafuta_lat',userLat);sessionStorage.setItem('tafuta_lng',userLng);sessionStorage.setItem('tafuta_locname',name);}catch(e){}
+    try{localStorage.setItem('tafuta_lat',userLat);localStorage.setItem('tafuta_lng',userLng);localStorage.setItem('tafuta_locname',name);}catch(e){}
   },()=>{setText('loc-text','Eneo halikupatikana');if(locBtn)locBtn.textContent='🔄';},{timeout:8000});
 }
 function setLocFilter(f){
@@ -2127,7 +2453,7 @@ function openHabariIfNeeded(id){
 // ── INIT ──
 window.addEventListener('DOMContentLoaded',function(){
   try{
-    const slat=sessionStorage.getItem('tafuta_lat'),slng=sessionStorage.getItem('tafuta_lng'),slocname=sessionStorage.getItem('tafuta_locname');
+    const slat=localStorage.getItem('tafuta_lat'),slng=localStorage.getItem('tafuta_lng'),slocname=localStorage.getItem('tafuta_locname');
     if(slat&&slng){
       userLat=parseFloat(slat);userLng=parseFloat(slng);userLocName=slocname||'';
       if(userLocName){
